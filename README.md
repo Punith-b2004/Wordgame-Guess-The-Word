@@ -16,7 +16,6 @@ User Registration & Login with validation:
 Username: min 5 characters, must include upper & lower case.
 Password: min 5 characters, must include letters, digits, and special chars ($, %, *, @).
 Daily Limit: Max 3 games per user per day.
-![Daily Limit](assets/limit.png)
 
 Gameplay:
 Secret 5-letter word randomly chosen from 20 seeded words.
