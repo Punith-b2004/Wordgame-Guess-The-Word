@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Word</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+        .game-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 50px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            gap: 8px;
+            margin: 20px auto;
+            justify-content: center;
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background: #6c757d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .green {
+            background: #28a745 !important;
+            animation: glow 0.5s ease-out;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+        .orange {
+            background: #fd7e14 !important;
+            animation: glow 0.5s ease-out;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(253, 126, 20, 0.5);
+        }
+        @keyframes glow {
+            0% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+            50% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.7); }
+            100% { box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        .input-group {
+            max-width: 300px;
+            margin: 0 auto 20px;
+        }
+        .form-control {
+            border-radius: 25px 0 0 25px;
+            border: none;
+            padding: 12px 15px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .btn-primary, .btn-secondary {
+            border-radius: 0 25px 25px 0;
+            padding: 12px 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .btn-secondary:hover {
+            background-color: #6c757d;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .hint-area {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-style: italic;
+            color: #ffd700;
+            min-height: 20px;
+        }
+        a {
+            color: #fff;
+            text-decoration: none;
+            margin-top: 20px;
+            display: inline-block;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ddd;
+        }
+        .guesses-remaining {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        {% if message %}
+            <div class="alert alert-info text-center mb-3">
+                <h2>{{ message }}</h2>
+            </div>
+        {% else %}
+            <h2><i class="fas fa-puzzle-piece me-2"></i>Guess the Word!</h2>
+        {% endif %}
+        <div id="grid" class="grid"></div>
+        <form id="guess-form" {% if game_id %}action="/guess/{{ game_id }}/"{% endif %} method="post">
+            {% csrf_token %}
+            <div class="input-group">
+                <input type="text" id="guess" name="guess" maxlength="5" class="form-control" placeholder="Enter 5-letter word" required>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search me-1"></i>Guess</button>
+            </div>
+        </form>
+        <div class="guesses-remaining">
+            Guesses remaining: <span id="guesses-left">5</span>
+        </div>
+        <button id="hint-btn" class="btn btn-secondary mt-3"><i class="fas fa-lightbulb me-1"></i>Hint</button>
+        <div id="hint-area" class="hint-area"></div>
+        <a href="/" class="mt-3"><i class="fas fa-home me-1"></i>Home</a>
+    </div>
+
+    <script>
+        const guesses = JSON.parse('{{ guesses|default:"[]"|escapejs }}');
+        function updateGrid(guesses) {
+            const grid = document.getElementById("grid");
+            grid.innerHTML = "";
+            for (let g of guesses) {
+                for (let i = 0; i < 5; i++) {
+                    const cell = document.createElement("div");
+                    cell.className = `cell ${g.feedback[i]}`;
+                    cell.textContent = g.guess[i];
+                    grid.appendChild(cell);
+                }
+            }
+            // Add empty rows for remaining guesses
+            for (let row = guesses.length; row < 5; row++) {
+                for (let i = 0; i < 5; i++) {
+                    const cell = document.createElement("div");
+                    cell.className = "cell";
+                    grid.appendChild(cell);
+                }
+            }
+            document.getElementById("guesses-left").textContent = 5 - guesses.length;
+        }
+        updateGrid(guesses);
+
+        document.getElementById("guess-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const response = await fetch(e.target.action, {
+                method: "POST",
+                body: formData,
+            });
+            const data = await response.json();
+            if (data.error) {
+                alert(data.error);
+            } else {
+                updateGrid(data.guesses);
+                if (data.game_over) {
+                    alert(data.message);
+                    document.getElementById("guess-form").style.display = "none";
+                }
+            }
+        });
+
+        // Hint button functionality
+        document.getElementById("hint-btn").addEventListener("click", async () => {
+            const gameId = Number("{{ game_id|default:0 }}");
+            if (!gameId) {
+                alert("Start a game first!");
+                return;
+            }
+            const response = await fetch(`/hint/${gameId}/`, {
+                method: "GET",
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                },
+                credentials: 'same-origin',
+            });
+            const data = await response.json();
+            const hintArea = document.getElementById("hint-area");
+            if (data.error) {
+                hintArea.textContent = data.error;
+                hintArea.style.color = "#dc3545";
+            } else {
+                hintArea.textContent = data.hint;
+                hintArea.style.color = "#ffd700";
+            }
+        });
+    </script>
+</body>
+</html>

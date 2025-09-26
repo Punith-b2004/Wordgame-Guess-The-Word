@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Login - WordGame{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card border-0 shadow-lg">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4"><i class="fas fa-sign-in-alt me-2"></i>Login to WordGame</h2>
+                <p class="text-center text-muted mb-4">Choose your login type below.</p>
+                
+                <ul class="nav nav-tabs justify-content-center mb-4" id="loginTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="user-tab" data-bs-toggle="tab" data-bs-target="#user-login" type="button" role="tab">
+                            <i class="fas fa-user me-1"></i>User Login
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-login" type="button" role="tab">
+                            <i class="fas fa-user-shield me-1"></i>Admin Login
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="loginTabContent">
+                    <div class="tab-pane fade show active" id="user-login" role="tabpanel">
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary btn-custom w-100">Login as User</button>
+                        </form>
+                    </div>
+                    <div class="tab-pane fade" id="admin-login" role="tabpanel">
+                        <form method="post" action="/admin/">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-warning btn-custom w-100">Login as Admin</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="{% url 'register' %}" class="text-decoration-none">Don't have an account? Register here!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

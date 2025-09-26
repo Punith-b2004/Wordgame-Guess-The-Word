@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Home - WordGame{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center hero animate__animated animate__fadeIn">
+        <h1 class="display-4 mb-4"><i class="fas fa-puzzle-piece me-3"></i>Welcome to WordGame!</h1>
+        <p class="lead mb-4">An exciting open-text word guessing game project. Challenge yourself to guess the 5-letter word in 5 tries or less. Get feedback with colors: Green for correct position, Orange for wrong position, Gray for not in word. Up to 3 games per day!</p>
+        {% if user.is_authenticated %}
+            {% if max_limit_reached %}
+                <div class="alert alert-warning animate__animated animate__bounceIn">
+                    <i class="fas fa-exclamation-triangle me-2"></i>Maximum limit exceeded! Come tomorrow for more fun.
+                </div>
+                <a href="/game/" class="btn btn-outline-light btn-custom mb-3">View Games Anyway</a>
+            {% else %}
+                <a href="/game/" class="btn btn-light btn-custom mb-3">
+                    <i class="fas fa-play-circle me-2"></i>Play Game
+                </a>
+            {% endif %}
+        {% else %}
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <a href="{% url 'login' %}" class="btn btn-light btn-custom me-3"><i class="fas fa-sign-in-alt me-2"></i>Login to Play</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-light btn-custom"><i class="fas fa-user-plus me-2"></i>Register</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<section id="about" class="py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg bg-light bg-opacity-10 text-white">
+                <div class="card-body p-5">
+                    <h2 class="card-title text-center mb-4"><i class="fas fa-info-circle me-2"></i>About WordGame</h2>
+                    <p class="card-text text-center fs-5">This is a Django-powered word guessing game inspired by Wordle. Built as an open-text project, it's fully customizable—add more words, extend features, or deploy it anywhere. Track your stats in the admin panel!</p>
+                    <div class="text-center">
+                        <a href="/game/" class="btn btn-success btn-custom">Start Playing <i class="fas fa-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
