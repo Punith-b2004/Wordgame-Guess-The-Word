@@ -1,4 +1,6 @@
-<img width="1355" height="917" alt="image" src="https://github.com/user-attachments/assets/17fc024e-6dfc-4bfc-a634-2e69c4d0fb89" /># Wordgame-Guess-The-Word
+<img width="1355" height="917" alt="image" src="https://github.com/user-attachments/assets/17fc024e-6dfc-4bfc-a634-2e69c4d0fb89" />
+
+# Wordgame-Guess-The-Word
 
 ![Landing Page](assets/image.png)
 
